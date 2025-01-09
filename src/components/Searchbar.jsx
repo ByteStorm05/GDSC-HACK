@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Calendar, Users } from 'lucide-react';
 import cityList from '../assets/indianCities.json'; // Import the Indian cities list
 
+
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCityDropdown, setShowCityDropdown] = useState(false);
