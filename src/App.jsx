@@ -2,8 +2,8 @@ import {  RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider"
 import AppLayout from "./layout/app-layout";
 import LandingPage from "./pages/LandingPage";
-import HotelsPage from "./pages/HotelsPage";
 import ProtectedRoute from "./components/protected-route";
+import Onboarding from "./pages/Onboarding";
 
 const router = createBrowserRouter([
   {
@@ -14,8 +14,8 @@ const router = createBrowserRouter([
         element: <LandingPage />,
       },
       {
-        path: "/hotels-page",
-        element: (<ProtectedRoute><HotelsPage /></ProtectedRoute>),
+        path: "/onboarding",
+        element: (<ProtectedRoute><Onboarding /></ProtectedRoute>),
       },
       
     ],
