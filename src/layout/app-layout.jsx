@@ -15,7 +15,7 @@ const AppLayout = () => {
       </main>
 
       <div className="p-10 text-center bg-gray-100 mt-10">
-        Made with 💗 by Saransh
+        Made with 💗
       </div>
     </div>
   );
