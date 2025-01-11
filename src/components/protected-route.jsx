@@ -10,9 +10,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/?sign-in=true" />;
   }
   // So if user with no role goes to any other pages OR in other words user hasnt been onboarded yet
-  if ( user !== undefined && !user?.unsafeMetadata?.role && pathname !== "/onboarding"){
-    return <Navigate to="/onboarding" />;
-  }
+
 
   return children;
 };

@@ -76,12 +76,14 @@ const Onboarding = () => {
           {currentHotels.map((hotel, index) => (
             <PropertyCard
               key={index}
+              hotel= {hotel}
               images={["/placeholder.png"]} // Add placeholder or actual images
               location={hotel.City || "Unknown City"}
               title={hotel.Hotel_Name || "Hotel Name Not Available"}
               rating={hotel.Hotel_Rating || "No Rating"}
               price={hotel.Hotel_Price ? `₹${hotel.Hotel_Price.toLocaleString()}` : "Price Not Available"}
               facilities={hotel.Facilities || "No Facilities Listed"}
+              savedInit = {hotel?.saved?.length > 0}
             />
           ))}
         </div>

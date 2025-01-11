@@ -1,18 +1,54 @@
 import React from 'react';
 import { Heart, Star } from 'lucide-react';
-
-
-
+import { savehotel } from '@/api/apiHotels';
+import useFetch from '@/hooks/useFetch';
+import { useState,useEffect} from 'react';
+import { Button } from './ui/button';
+import { useUser } from '@clerk/clerk-react';
 
 const PropertyCard = ({ 
+  hotel,
   images,
   location,
   title,
   rating,
   dates,
   price,
-  favorite = false
+  savedInit=true,
+  onhotelAction = () => {},
 }) => {
+
+  const { user } = useUser();
+
+// Temp solution type shi
+  const [saved, setSaved] = useState(savedInit);
+
+  const {
+    loading: loadingSavedhotel,
+    data: savedHotel,
+    fn: fnSavedhotel,
+  } = useFetch(savehotel, {
+    alreadySaved:saved,
+  });
+
+  const handleSavehotel = async () => {
+    await fnSavedhotel({
+      user_id: user.id,
+      hotel_id: hotel.id,
+    });
+    onhotelAction();
+  };
+
+
+
+
+  useEffect(() => {
+    if (savedHotel !== undefined) setSaved(savedHotel?.length > 0);
+  }, [savedHotel]);
+
+
+
+
   return (
     <div className="group relative z-0">
       {/* Image Carousel */}
@@ -24,11 +60,23 @@ const PropertyCard = ({
         />
         <button 
           className="absolute top-3 right-3 p-2 rounded-full hover:bg-white/10 transition-colors"
-          aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={saved ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart 
-            className={`h-6 w-6 ${favorite ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} 
-          />
+          {/* <Heart 
+            className={`h-6 w-6 ${saved ? 'fill-red-500 stroke-red-500' : 'stroke-white'}`} 
+          /> */}
+          <Button
+            variant="outline"
+            className="w-15"
+            onClick={handleSavehotel}
+            disabled={loadingSavedhotel}
+          >
+            {saved ? (
+              <Heart size={20} fill="red" stroke="red" />
+            ) : (
+              <Heart size={20} />
+            )}
+          </Button>
         </button>
       </div>
 

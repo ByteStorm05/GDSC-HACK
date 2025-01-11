@@ -4,6 +4,7 @@ import AppLayout from "./layout/app-layout";
 import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./components/protected-route";
 import Onboarding from "./pages/Onboarding";
+import SavedHotelsPage from "./pages/SavedHotelsPage";
 
 
 const router = createBrowserRouter([
@@ -18,6 +19,11 @@ const router = createBrowserRouter([
         path: "/onboarding",
         element: (<ProtectedRoute><Onboarding /></ProtectedRoute>),
       },
+      {
+        path: "/saved-hotels",
+        element: (<ProtectedRoute><SavedHotelsPage /></ProtectedRoute>),
+      },
+
       
     ],
   },
