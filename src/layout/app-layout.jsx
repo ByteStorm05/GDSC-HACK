@@ -1,5 +1,8 @@
 import Header from "../components/Header";
 import { Outlet } from "react-router-dom";
+import ChatBotUi from "@/components/Chatbot";
+
+
 
 const AppLayout = () => {
   return (
@@ -12,6 +15,8 @@ const AppLayout = () => {
         <Header />
         <div className="h-[68px]"></div>
         <Outlet />
+
+
       </main>
 
       <div className="p-10 text-center bg-gray-100 mt-10">

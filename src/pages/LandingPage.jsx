@@ -1,15 +1,14 @@
-import PropertyGrid from '@/components/Cards'
+import HeroSection from '@/components/HeroSection'
+import PropertyGrid from '@/components/PropertyGrid'
 import SearchBar from '@/components/Searchbar'
 import React from 'react'
 
 const LandingPage = () => {
   return (
     <>
-    <SearchBar />
-    <div className='items-center flex justify-center'>
-      
-    <PropertyGrid />
-    </div>
+    
+   <HeroSection/>
+
     
     </>
   )

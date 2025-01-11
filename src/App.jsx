@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./components/protected-route";
 import Onboarding from "./pages/Onboarding";
 
+
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -25,8 +26,8 @@ const router = createBrowserRouter([
 
 const App = () => {
   return(
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
- <RouterProvider router={router} />
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme"> 
+        <RouterProvider router={router} />
   </ThemeProvider>
    
   )
