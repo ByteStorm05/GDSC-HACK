@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import ProtectedRoute from "./components/protected-route";
 import Onboarding from "./pages/Onboarding";
 import SavedHotelsPage from "./pages/SavedHotelsPage";
+import VoiceSearchPage from "./pages/VoiceSearchPage";
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/saved-hotels",
         element: (<ProtectedRoute><SavedHotelsPage /></ProtectedRoute>),
+      },
+      {
+        path: "/voice",
+        element: (<ProtectedRoute><VoiceSearchPage /></ProtectedRoute>),
       },
 
       
