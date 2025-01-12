@@ -5,17 +5,6 @@ export async function getHotels(token) {
   let query = supabase
     .from("hotels").select("*, saved:saved_hotels(id)");
 
-  // if (location) {
-  //   query = query.eq("location", location);
-  // }
-
-  // if (company_id) {
-  //   query = query.eq("company_id", company_id);
-  // }
-
-  // if (searchQuery) {
-  //   query = query.ilike("title", `%${searchQuery}%`);
-  // }
 
   const { data, error } = await query;
 
@@ -26,7 +15,6 @@ export async function getHotels(token) {
 
   return data;
 }
-
 // - Add / Remove Saved hotel
 export async function savehotel(token, { alreadySaved }, saveData) {
   const supabase = await supabaseClient(token);

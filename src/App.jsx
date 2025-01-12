@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/protected-route";
 import Onboarding from "./pages/Onboarding";
 import SavedHotelsPage from "./pages/SavedHotelsPage";
 import VoiceSearchPage from "./pages/VoiceSearchPage";
+import ChatPage from "./pages/ChatPage";
 
 
 const router = createBrowserRouter([
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "/voice",
         element: (<ProtectedRoute><VoiceSearchPage /></ProtectedRoute>),
+      },
+      {
+        path: "/chat",
+        element: (<ProtectedRoute><ChatPage /></ProtectedRoute>),
       },
 
       
