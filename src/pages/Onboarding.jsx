@@ -5,6 +5,7 @@ import PropertyCard from "@/components/Cards";
 import { useUser } from "@clerk/clerk-react";
 import { BarLoader } from "react-spinners";
 import SearchBar from "@/components/Searchbar";
+import HotelSearchSuggestions from "@/components/HotelSuggestions";
 
 const Onboarding = () => {
   const { isLoaded } = useUser();
@@ -70,6 +71,8 @@ const Onboarding = () => {
           <p className="text-lg font-semibold">Selected City: {selectedCity}</p>
         </div>
       )}
+
+      <HotelSearchSuggestions/>
 
       <div className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
