@@ -1,10 +1,9 @@
 import supabaseClient from "@/utils/supabase";
 
-export async function getHotels(token) {
+export async function getHotels(token, amenitiesFilter) {
   const supabase = await supabaseClient(token);
   let query = supabase
     .from("hotels").select("*, saved:saved_hotels(id)");
-
 
   const { data, error } = await query;
 

@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Mic, MicOff, Search } from 'lucide-react';
 import axios from 'axios';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const VoiceSearch2 = ({ onSearch }) => {
+const genAI = new GoogleGenerativeAI(`${import.meta.env.VITE_API_GENERATIVE_LANGUAGE_CLIENT}`);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+const AmenityVoiceInput = ({ setAmenitiesList }) => {
   const [isListening, setIsListening] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [recognition, setRecognition] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
   const [error, setError] = useState('');
   const [isSupported, setIsSupported] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [hotelFeatures, setHotelFeatures] = useState(null);
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -87,146 +91,120 @@ const VoiceSearch2 = ({ onSearch }) => {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchText.trim()) return;
+  const handleDone = async () => {
+    if (!searchText.trim()) return; // Prevent empty submissions
 
-    setIsProcessing(true);
+    setLoading(true);
+    setAiResponse('');
+
     try {
-      // Create the prompt for Gemini
-      const prompt = `Based on this hotel search request: "${searchText}", analyze which features should be enabled (1) or disabled (0). Return ONLY a JSON object with these exact keys and binary values (0 or 1):
-      {
-        "Parking": 0,
-        "Pool": 0,
-        "WiFi": 0,
-        "Pet_friendly": 0,
-        "Spa": 0,
-        "Hot_tub": 0,
-        "Air_conditioning": 0,
-        "Attached_kitchen": 0,
-        "Restaurant": 0,
-        "Gym": 0,
-        "24_hour_reception": 0,
-        "EV_charger": 0,
-        "Sauna": 0,
-        "Fridge": 0,
-        "Arcade": 0,
-        "Cot": 0,
-        "Childcare": 0,
-        "Organised_activities_for_kids": 0,
-        "Playground": 0,
-        "Kids_club": 0,
-        "Kids_pool": 0,
-        "Wheelchair_accessible": 0,
-        "In_room_accessibility": 0,
-        "Accessible_parking": 0
-      }
-      Set 1 for features mentioned or implied in the request, 0 for others. Return ONLY the JSON object, no other text.`;
+      // const prompt = `Based on this hotel search request: "${searchText}", analyze which features should be enabled (1) or disabled (0). Return ONLY a comma-separated list of enabled amenities (1) from the following list in STRICTLY the exact order as presented:
 
-      const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${
-          import.meta.env.VITE_API_GENERATIVE_LANGUAGE_CLIENT
-        }`,
-        method: "post",
-        data: {
-          contents: [{ parts: [{ text: prompt }] }],
-        },
-      });
+      // "Parking", "Pool", "WiFi", "Pet_friendly", "Spa", "Hot_tub", "Air_conditioning", "Attached_kitchen", "Restaurant", "Gym", "24-hour_reception", "EV_charger", "Sauna", "Fridge", "Arcade", "Cot", "Childcare", "Organised_activities_for_kids", "Playground", "Kid's_club", "Kid's_pool", "Wheelchair_accessible", "In-room_accessibility", "Accessible_parking".
+      
+      // Replace "_" with space. Example: "Parking, Pool, WiFi" (only the enabled features) and preserve the order without skipping any amenities.`;
+      const prompt = `Based on this hotel search request: "${searchText}", analyze which features should be enabled (1) from the following list. Return ONLY a comma-separated list of enabled amenities (1) from the list, strictly in the order as presented. 
 
-      const aiResponse = response.data.candidates[0].content.parts[0].text;
-      console.log('AI Response:', aiResponse); // Debugging: Log the response
+"Parking", "Pool", "WiFi", "Pet_friendly", "Spa", "Hot_tub", "Air_conditioning", "Attached_kitchen", "Restaurant", "Gym", "24-hour_reception", "EV_charger", "Sauna", "Fridge", "Arcade", "Cot", "Childcare", "Organised_activities_for_kids", "Playground", "Kids'_club", "Kids'_pool", "Wheelchair_accessible", "In-room_accessibility", "Accessible_parking".
 
-      // Sanitize the response to remove unwanted characters
-      const sanitizedResponse = aiResponse.replace(/```(?:json)?|```/g, '').trim();
+Only include the amenities that are mentioned or implied in the request. Return them in the exact order as in the list, with no other text.`;
 
-      // Parse the cleaned JSON
-      const features = JSON.parse(sanitizedResponse);
-      setHotelFeatures(features);
-      onSearch(features); // Pass features to parent component
+
+      // Pass the custom prompt to the Gemini model
+      const result = await model.generateContent([prompt]);
+      const response = await result.response;
+      const text = await response.text();
+
+      // Process the AI response
+      const amenitiesOrder = [
+        "Parking", "Pool", "WiFi", "Pet_friendly", "Spa", "Hot_tub", "Air_conditioning", "Attached_kitchen",
+        "Restaurant", "Gym", "24-hour_reception", "EV_charger", "Sauna", "Fridge", "Arcade", "Cot", 
+        "Childcare", "Organised_activities_for_kids", "Playground", "Kids'_club", "Kids'_pool", "Wheelchair_accessible",
+        "In-room_accessibility", "Accessible_parking"
+      ];
+
+      const filteredResponse = text
+        .split(",")
+        .map(item => item.trim().replace(/\s+/g, "_")) // Replace spaces with underscores
+        .filter(item => amenitiesOrder.includes(item)) // Ensure the items exist in the predefined order
+        .sort((a, b) => amenitiesOrder.indexOf(a) - amenitiesOrder.indexOf(b)); // Sort according to the predefined order
+
+      const amenitiesList = filteredResponse
+        .map(item => item.replace(/_/g, " ")) // Replace underscores with spaces
+        .join(", "); // Join the array into a comma-separated string
+
+      // Pass the amenities list back to ChatPage
+
+      setAmenitiesList(amenitiesList)
+      // Set the AI response as the output
+      setAiResponse(amenitiesList);
     } catch (error) {
-      console.error('Error processing with Gemini:', error);
-      setError('Failed to process search request. Please try again.');
-    } finally {
-      setIsProcessing(false);
+      console.error("Error while fetching AI response:", error);
+      setAiResponse("Sorry, something went wrong. Please try again.");
     }
+
+    setLoading(false);
   };
 
+
   return (
-    <div className="w-full max-w-2xl mx-auto p-4">
-      <div className="relative flex">
-        <div className="flex items-center border-2 border-blue-500 rounded-lg bg-white overflow-hidden w-3/4">
-          <Search className="w-5 h-5 ml-3 text-blue-500" />
-          <input
-            type="text"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            placeholder={isSupported ? "Describe hotel features you want..." : "Speech recognition not supported"}
-            className="w-full px-4 py-2 text-black outline-none"
-            disabled={!isSupported}
-          />
-          <button
-            onClick={toggleListening}
-            className={`p-2 mx-2 rounded-full transition-colors ${
-              !isSupported 
-                ? 'bg-gray-400 cursor-not-allowed'
-                : isListening 
-                  ? 'bg-red-500 hover:bg-red-600' 
-                  : 'bg-blue-500 hover:bg-blue-600'
-            }`}
-            disabled={!isSupported}
-          >
-            {isListening ? (
-              <MicOff className="w-5 h-5 text-white" />
-            ) : (
-              <Mic className="w-5 h-5 text-white" />
-            )}
-          </button>
-        </div>
+    <div className="w-full max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg shadow-lg">
+    <div className="relative flex flex-col items-center">
+      <div className="flex items-center border-2 border-blue-500 rounded-lg bg-white overflow-hidden w-full md:w-3/4 mb-4 shadow-md">
+        <Search className="w-5 h-5 ml-3 text-blue-500" />
+        <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder={isSupported ? "Describe hotel features you want..." : "Speech recognition not supported"}
+          className="w-full px-4 py-3 text-black outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+          disabled={!isSupported}
+        />
         <button
-          onClick={handleSearch}
-          disabled={isProcessing}
-          className={`p-2 mx-2 rounded-sm transition-colors ${
-            isProcessing ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
-          } text-white px-4`}
+          onClick={toggleListening}
+          className={`p-2 mx-2 rounded-full transition-colors duration-200 ${
+            !isSupported 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : isListening 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-blue-500 hover:bg-blue-600'
+          }`}
+          disabled={!isSupported}
         >
-          {isProcessing ? 'Processing...' : 'Search'}
+          {isListening ? (
+            <MicOff className="w-5 h-5 text-white" />
+          ) : (
+            <Mic className="w-5 h-5 text-white" />
+          )}
         </button>
       </div>
-        
+  
+      {/* Done Button */}
+      <button
+        onClick={handleDone}
+        disabled={loading || !searchText.trim()}
+        className={`w-full p-3 rounded-md transition-colors duration-200 ${
+          loading || !searchText.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+        } text-white font-semibold`}
+      >
+        {loading ? 'Processing...' : 'Done'}
+      </button>
+  
+      {/* Error or Listening Status */}
       {error && (
         <div className="absolute -bottom-6 left-0 w-full text-center text-sm text-red-500">
           {error}
         </div>
       )}
-        
       {isListening && !error && (
         <div className="absolute -bottom-6 left-0 w-full text-center text-sm text-blue-500">
           Listening...
         </div>
       )}
-
-      {/* Results Display */}
-      {hotelFeatures && (
-        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-          <h3 className="font-bold mb-4">Requested Hotel Features:</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries(hotelFeatures).map(([feature, value]) => (
-              <div 
-                key={feature} 
-                className={`flex items-center p-2 rounded ${
-                  value === 1 ? 'bg-blue-100' : 'bg-gray-50'
-                }`}
-              >
-                <span className="font-medium">{feature.replace(/_/g, ' ')}:</span>
-                <span className={`ml-2 ${value === 1 ? 'text-blue-600' : 'text-gray-500'}`}>
-                  {value === 1 ? 'Yes' : 'No'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
+  </div>
+  
   );
 };
 
-export default VoiceSearch2;
+export default AmenityVoiceInput;
