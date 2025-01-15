@@ -7,6 +7,7 @@ import Onboarding from "./pages/Onboarding";
 import SavedHotelsPage from "./pages/SavedHotelsPage";
 import VoiceSearchPage from "./pages/VoiceSearchPage";
 import ChatPage from "./pages/ChatPage";
+import ImageSearchPage from "./pages/ImageSearchPage";
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
         path: "/chat",
         element: (<ProtectedRoute><ChatPage /></ProtectedRoute>),
       },
+      {
+        path: "/image",
+        element: (<ProtectedRoute><ImageSearchPage /></ProtectedRoute>),
+      }
 
       
     ],

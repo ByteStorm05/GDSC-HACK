@@ -1,8 +1,10 @@
+import AmenityPreferences from '@/components/GeminiChat'
+
 import React from 'react'
 
 const ChatPage = () => {
   return (
-    <div>ChatPage</div>
+    <><AmenityPreferences/></>
   )
 }
 
