@@ -9,6 +9,7 @@ import VoiceSearchPage from "./pages/VoiceSearchPage";
 import ChatPage from "./pages/ChatPage";
 import ImageSearchPage from "./pages/ImageSearchPage";
 import HotelPage from "./pages/HotelPage";
+import Errorpage from "./pages/Errorpage";
 
 
 const router = createBrowserRouter([
@@ -42,7 +43,11 @@ const router = createBrowserRouter([
       {
         path: "/hotel/:id",
         element: (<ProtectedRoute><HotelPage /></ProtectedRoute>),
-      }
+      },
+      {
+        path: "*",
+        element: <Errorpage />, // Render the ErrorPage component
+      },
 
 
       
