@@ -1,6 +1,6 @@
 import HeroSection from '@/components/HeroSection'
-import PropertyGrid from '@/components/PropertyGrid'
-import SearchBar from '@/components/Searchbar'
+
+import Work from '@/components/Work'
 import React from 'react'
 
 const LandingPage = () => {
@@ -8,7 +8,7 @@ const LandingPage = () => {
     <>
     
    <HeroSection/>
-
+    <Work/>
     
     </>
   )
