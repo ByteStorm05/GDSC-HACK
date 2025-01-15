@@ -59,6 +59,7 @@ const ChatPage = () => {
           {currentHotels.map((hotel, index) => (
             <PropertyCard
               key={index}
+              id={hotel.id}
               hotel={hotel}
               images={["/placeholder.png"]} // Add placeholder or actual images
               location={hotel.City || "Unknown City"}
