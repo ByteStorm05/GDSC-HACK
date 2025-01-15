@@ -5,8 +5,11 @@ import useFetch from '@/hooks/useFetch';
 import { useState,useEffect} from 'react';
 import { Button } from './ui/button';
 import { useUser } from '@clerk/clerk-react';
+import { Link } from "react-router-dom";
 
 const PropertyCard = ({ 
+  key,
+  id,
   hotel,
   images,
   location,
@@ -50,6 +53,8 @@ const PropertyCard = ({
 
 
   return (
+    <>
+    <Link to = {`/hotel/${id}`}> 
     <div className="group relative z-0">
       {/* Image Carousel */}
       <div className="aspect-square rounded-xl overflow-hidden -z-10">
@@ -102,6 +107,8 @@ const PropertyCard = ({
         </p>
       </div>
     </div>
+    </Link>
+    </>
   );
 };
 

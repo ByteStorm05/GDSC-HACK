@@ -62,3 +62,22 @@ export async function getSavedHotels(token) {
 
   return data;
 }
+
+
+//Get single hotel
+
+export async function getSingleHotel(token, { hotel_id }) {
+  const supabase = await supabaseClient(token);
+  let query = supabase.from("hotels").select("*")
+    .eq("id", hotel_id)
+    .single();
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error fetching Job:", error);
+    return null;
+  }
+
+  return data;
+}

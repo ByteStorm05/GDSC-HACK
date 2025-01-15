@@ -76,9 +76,10 @@ const Onboarding = () => {
 
       <div className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {currentHotels.map((hotel, index) => (
+          {currentHotels.map((hotel,index) => (
             <PropertyCard
               key={index}
+              id={hotel.id}
               hotel= {hotel}
               images={["/placeholder.png"]} // Add placeholder or actual images
               location={hotel.City || "Unknown City"}
