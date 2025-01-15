@@ -10,7 +10,7 @@ const ErrorPage = () => {
           Oops! Page Not Found
         </h2>
         <p className="text-gray-600 mb-6">
-          Sorry, the page you are looking for doesn't exist or has been moved.
+          Sorry, the page you are looking for doesn't exist or has been moved
         </p>
         <Link to="/" className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all">
           Go Back Home
