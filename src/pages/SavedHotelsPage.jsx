@@ -55,7 +55,7 @@ const SavedHotelsPage = () => {
               );
             })
           ) : (
-            <div>No Saved Jobs 👀</div>
+            <div>No Saved Hotels 👀</div>
           )}
         </div>
       )}
